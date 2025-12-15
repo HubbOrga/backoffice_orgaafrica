@@ -95,10 +95,10 @@ const INITIAL_USERS: User[] = [
 ];
 
 const ROLE_BADGES: Record<string, { label: string; color: string }> = {
-    admin: { label: 'Admin', color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' },
-    manager: { label: 'Manager', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' },
-    restaurant_owner: { label: 'Propriétaire', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
-    user: { label: 'Utilisateur', color: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300' },
+    admin: { label: 'Admin', color: 'bg-black text-white dark:bg-white dark:text-black' },
+    manager: { label: 'Manager', color: 'bg-gray-800 text-white dark:bg-gray-200 dark:text-black' },
+    restaurant_owner: { label: 'Propriétaire', color: 'bg-gray-600 text-white dark:bg-gray-400 dark:text-black' },
+    user: { label: 'Utilisateur', color: 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100' },
 };
 
 const ROLES = [
@@ -227,7 +227,7 @@ function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                 </button>
                 <button
                     type="submit"
-                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-medium transition-all"
+                    className="flex-1 px-4 py-2.5 bg-primary text-primary-foreground hover:opacity-90 rounded-xl font-medium transition-all"
                 >
                     {user ? 'Modifier' : 'Créer'}
                 </button>
@@ -250,7 +250,7 @@ function UserDetail({ user, onClose }: UserDetailProps) {
         <div className="space-y-6">
             {/* Avatar */}
             <div className="flex flex-col items-center">
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold">
+                <div className="w-20 h-20 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-2xl font-bold">
                     {user.fullname.charAt(0)}
                 </div>
                 <h3 className="mt-3 text-xl font-semibold text-gray-900 dark:text-white">
@@ -287,9 +287,9 @@ function UserDetail({ user, onClose }: UserDetailProps) {
                 <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
                     <div className="flex items-center gap-3">
                         {user.email_verified ? (
-                            <CheckCircle className="w-5 h-5 text-green-500" />
+                            <CheckCircle className="w-5 h-5 text-gray-900 dark:text-white" />
                         ) : (
-                            <XCircle className="w-5 h-5 text-red-500" />
+                            <XCircle className="w-5 h-5 text-gray-400" />
                         )}
                         <div>
                             <p className="text-xs text-gray-500 dark:text-gray-400">Statut email</p>
@@ -402,7 +402,7 @@ export default function UsersList() {
                 </div>
                 <button
                     onClick={() => setIsCreateModalOpen(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground hover:opacity-90 font-medium rounded-xl transition-all duration-300 shadow-lg"
                 >
                     <Plus className="w-5 h-5" />
                     Ajouter un utilisateur
@@ -476,7 +476,7 @@ export default function UsersList() {
                                     <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center gap-3">
-                                                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
+                                                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
                                                     {user.fullname.charAt(0)}
                                                 </div>
                                                 <div>
@@ -509,12 +509,12 @@ export default function UsersList() {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             {user.email_verified ? (
-                                                <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400 text-sm">
+                                                <span className="inline-flex items-center gap-1 text-gray-900 dark:text-gray-100 text-sm">
                                                     <CheckCircle className="w-4 h-4" />
                                                     Vérifié
                                                 </span>
                                             ) : (
-                                                <span className="inline-flex items-center gap-1 text-red-600 dark:text-red-400 text-sm">
+                                                <span className="inline-flex items-center gap-1 text-gray-500 dark:text-gray-400 text-sm">
                                                     <XCircle className="w-4 h-4" />
                                                     Non vérifié
                                                 </span>
@@ -527,21 +527,21 @@ export default function UsersList() {
                                             <div className="flex items-center justify-end gap-2">
                                                 <button
                                                     onClick={() => openViewModal(user)}
-                                                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                                                    className="p-2 text-gray-400 hover:text-primary hover:bg-secondary rounded-lg transition-colors"
                                                     title="Voir"
                                                 >
                                                     <Eye className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     onClick={() => openEditModal(user)}
-                                                    className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 rounded-lg transition-colors"
+                                                    className="p-2 text-gray-400 hover:text-primary hover:bg-secondary rounded-lg transition-colors"
                                                     title="Modifier"
                                                 >
                                                     <Edit className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     onClick={() => openDeleteDialog(user)}
-                                                    className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                                                    className="p-2 text-gray-400 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                                                     title="Supprimer"
                                                 >
                                                     <Trash2 className="w-4 h-4" />

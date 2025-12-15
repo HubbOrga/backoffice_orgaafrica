@@ -131,10 +131,10 @@ const INITIAL_PROMOTIONS: Promotion[] = [
 ];
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-    active: { label: 'Active', color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400', icon: CheckCircle },
-    scheduled: { label: 'Planifiée', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400', icon: Calendar },
-    paused: { label: 'En pause', color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400', icon: Pause },
-    expired: { label: 'Expirée', color: 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300', icon: XCircle },
+    active: { label: 'Active', color: 'bg-black text-white dark:bg-white dark:text-black', icon: CheckCircle },
+    scheduled: { label: 'Planifiée', color: 'bg-gray-700 text-white dark:bg-gray-300 dark:text-black', icon: Calendar },
+    paused: { label: 'En pause', color: 'bg-gray-500 text-white dark:bg-gray-500 dark:text-white', icon: Pause },
+    expired: { label: 'Expirée', color: 'bg-gray-300 text-black dark:bg-gray-700 dark:text-white', icon: XCircle },
 };
 
 const DISCOUNT_TYPE_LABELS: Record<string, string> = {
@@ -370,7 +370,7 @@ function PromotionForm({ promotion, onSubmit, onCancel }: PromotionFormProps) {
                 </button>
                 <button
                     type="submit"
-                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-medium transition-all"
+                    className="flex-1 px-4 py-2.5 bg-primary text-primary-foreground hover:opacity-90 rounded-xl font-medium transition-all"
                 >
                     {promotion ? 'Modifier' : 'Créer'}
                 </button>
@@ -400,10 +400,10 @@ function PromotionDetail({ promotion, onClose }: PromotionDetailProps) {
     return (
         <div className="space-y-6">
             {/* Header with gradient */}
-            <div className={`h-32 rounded-xl relative flex items-center justify-center ${promotion.status === 'active' ? 'bg-gradient-to-br from-green-500 to-emerald-600' :
-                promotion.status === 'scheduled' ? 'bg-gradient-to-br from-blue-500 to-indigo-600' :
-                    promotion.status === 'paused' ? 'bg-gradient-to-br from-yellow-500 to-orange-600' :
-                        'bg-gradient-to-br from-gray-400 to-gray-500'
+            <div className={`h-32 rounded-xl relative flex items-center justify-center ${promotion.status === 'active' ? 'bg-gray-900' :
+                promotion.status === 'scheduled' ? 'bg-gray-700' :
+                    promotion.status === 'paused' ? 'bg-gray-500' :
+                        'bg-gray-300'
                 }`}>
                 {promotion.discount_type === 'percentage' && (
                     <span className="text-5xl font-bold text-white/90">-{promotion.discount_value}%</span>
@@ -470,9 +470,9 @@ function PromotionDetail({ promotion, onClose }: PromotionDetailProps) {
                         </div>
                         <div className="h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
                             <div
-                                className={`h-full rounded-full transition-all ${usagePercentage! > 80 ? 'bg-red-500' :
-                                    usagePercentage! > 50 ? 'bg-yellow-500' :
-                                        'bg-green-500'
+                                className={`h-full rounded-full transition-all ${usagePercentage! > 80 ? 'bg-gray-900' :
+                                    usagePercentage! > 50 ? 'bg-gray-700' :
+                                        'bg-gray-500'
                                     }`}
                                 style={{ width: `${usagePercentage}%` }}
                             ></div>
@@ -602,7 +602,7 @@ export default function PromotionsList() {
                 </div>
                 <button
                     onClick={() => setIsCreateModalOpen(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground hover:opacity-90 font-medium rounded-xl transition-all duration-300 shadow-lg"
                 >
                     <Plus className="w-5 h-5" />
                     Créer une promotion
@@ -613,8 +613,8 @@ export default function PromotionsList() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                            <Tag className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                        <div className="p-2 bg-secondary rounded-lg">
+                            <Tag className="w-5 h-5 text-primary" />
                         </div>
                         <div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">Total Promos</p>
@@ -624,30 +624,30 @@ export default function PromotionsList() {
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                            <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                        <div className="p-2 bg-secondary rounded-lg">
+                            <CheckCircle className="w-5 h-5 text-primary" />
                         </div>
                         <div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">Actives</p>
-                            <p className="text-xl font-bold text-green-600">{activeCount}</p>
+                            <p className="text-xl font-bold text-primary">{activeCount}</p>
                         </div>
                     </div>
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                            <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                        <div className="p-2 bg-secondary rounded-lg">
+                            <Calendar className="w-5 h-5 text-primary" />
                         </div>
                         <div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">Planifiées</p>
-                            <p className="text-xl font-bold text-blue-600">{scheduledCount}</p>
+                            <p className="text-xl font-bold text-primary">{scheduledCount}</p>
                         </div>
                     </div>
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg">
-                            <Percent className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                        <div className="p-2 bg-secondary rounded-lg">
+                            <Percent className="w-5 h-5 text-primary" />
                         </div>
                         <div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">Utilisations</p>
@@ -704,10 +704,10 @@ export default function PromotionsList() {
                                 className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all duration-300"
                             >
                                 {/* Header with gradient */}
-                                <div className={`h-24 relative ${promo.status === 'active' ? 'bg-gradient-to-br from-green-500 to-emerald-600' :
-                                    promo.status === 'scheduled' ? 'bg-gradient-to-br from-blue-500 to-indigo-600' :
-                                        promo.status === 'paused' ? 'bg-gradient-to-br from-yellow-500 to-orange-600' :
-                                            'bg-gradient-to-br from-gray-400 to-gray-500'
+                                <div className={`h-24 relative ${promo.status === 'active' ? 'bg-gray-900' :
+                                    promo.status === 'scheduled' ? 'bg-gray-700' :
+                                        promo.status === 'paused' ? 'bg-gray-500' :
+                                            'bg-gray-300'
                                     }`}>
                                     <div className="absolute inset-0 flex items-center justify-center">
                                         {promo.discount_type === 'percentage' && (
@@ -777,9 +777,9 @@ export default function PromotionsList() {
                                             </div>
                                             <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                                                 <div
-                                                    className={`h-full rounded-full transition-all ${usagePercentage! > 80 ? 'bg-red-500' :
-                                                        usagePercentage! > 50 ? 'bg-yellow-500' :
-                                                            'bg-green-500'
+                                                    className={`h-full rounded-full transition-all ${usagePercentage! > 80 ? 'bg-gray-900' :
+                                                        usagePercentage! > 50 ? 'bg-gray-700' :
+                                                            'bg-gray-500'
                                                         }`}
                                                     style={{ width: `${usagePercentage}%` }}
                                                 ></div>

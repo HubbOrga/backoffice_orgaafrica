@@ -8,7 +8,6 @@ import {
     Clock,
     Phone,
     CheckCircle,
-    XCircle,
     Edit,
     Trash2,
     Eye,
@@ -122,12 +121,12 @@ const INITIAL_RESTAURANTS: Restaurant[] = [
 ];
 
 const CUISINE_COLORS: Record<string, string> = {
-    'Française': 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
-    'Italienne': 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-    'Japonaise': 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-    'Africaine': 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
-    'Américaine': 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
-    'Asiatique': 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400',
+    'Française': 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
+    'Italienne': 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
+    'Japonaise': 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
+    'Africaine': 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
+    'Américaine': 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
+    'Asiatique': 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
 };
 
 const CUISINES = ['Française', 'Italienne', 'Japonaise', 'Africaine', 'Américaine', 'Asiatique', 'Mexicaine', 'Indienne'];
@@ -157,7 +156,7 @@ function RestaurantForm({ restaurant, onSubmit, onCancel }: RestaurantFormProps)
         phone: restaurant?.phone || '',
         cuisine: restaurant?.cuisine || 'Française',
         is_verified: restaurant?.is_verified || false,
-        is_open: restaurant?.is_open || true,
+        is_open: restaurant?.is_open ?? true,
         opening_hours: restaurant?.opening_hours || '08:00 - 22:00',
         image: restaurant?.image || DEFAULT_IMAGES[Math.floor(Math.random() * DEFAULT_IMAGES.length)],
     });
@@ -286,7 +285,7 @@ function RestaurantForm({ restaurant, onSubmit, onCancel }: RestaurantFormProps)
                 </button>
                 <button
                     type="submit"
-                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-medium transition-all"
+                    className="flex-1 px-4 py-2.5 bg-primary text-primary-foreground hover:opacity-90 rounded-xl font-medium transition-all"
                 >
                     {restaurant ? 'Modifier' : 'Créer'}
                 </button>
@@ -331,12 +330,12 @@ function RestaurantDetail({ restaurant, onClose }: RestaurantDetailProps) {
             {/* Status badges */}
             <div className="flex gap-2">
                 {restaurant.is_verified && (
-                    <span className="flex items-center gap-1 px-3 py-1.5 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-sm font-medium rounded-full">
+                    <span className="flex items-center gap-1 px-3 py-1.5 bg-gray-900 text-white dark:bg-white dark:text-black text-sm font-medium rounded-full">
                         <CheckCircle className="w-4 h-4" />
                         Vérifié
                     </span>
                 )}
-                <span className={`px-3 py-1.5 text-sm font-medium rounded-full ${restaurant.is_open ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'}`}>
+                <span className={`px-3 py-1.5 text-sm font-medium rounded-full ${restaurant.is_open ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100' : 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400'}`}>
                     {restaurant.is_open ? 'Ouvert' : 'Fermé'}
                 </span>
             </div>
@@ -469,7 +468,7 @@ export default function RestaurantsList() {
                 </div>
                 <button
                     onClick={() => setIsCreateModalOpen(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground hover:opacity-90 font-medium rounded-xl transition-all duration-300 shadow-lg"
                 >
                     <Plus className="w-5 h-5" />
                     Ajouter un restaurant
@@ -551,7 +550,7 @@ export default function RestaurantsList() {
                             className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all duration-300 group"
                         >
                             {/* Image */}
-                            <div className="relative h-48 bg-gradient-to-br from-purple-500 to-pink-500">
+                            <div className="relative h-48 bg-gray-200 dark:bg-gray-700">
                                 <img
                                     src={restaurant.image}
                                     alt={restaurant.name}
@@ -562,12 +561,12 @@ export default function RestaurantsList() {
                                 {/* Status badges */}
                                 <div className="absolute top-3 left-3 flex gap-2">
                                     {restaurant.is_verified && (
-                                        <span className="flex items-center gap-1 px-2 py-1 bg-green-500 text-white text-xs font-medium rounded-full">
+                                        <span className="flex items-center gap-1 px-2 py-1 bg-black text-white dark:bg-white dark:text-black text-xs font-medium rounded-full">
                                             <CheckCircle className="w-3 h-3" />
                                             Vérifié
                                         </span>
                                     )}
-                                    <span className={`px-2 py-1 text-white text-xs font-medium rounded-full ${restaurant.is_open ? 'bg-green-500' : 'bg-red-500'}`}>
+                                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${restaurant.is_open ? 'bg-white text-black' : 'bg-gray-800 text-white'}`}>
                                         {restaurant.is_open ? 'Ouvert' : 'Fermé'}
                                     </span>
                                 </div>
@@ -613,21 +612,21 @@ export default function RestaurantsList() {
                                     <div className="flex gap-2">
                                         <button
                                             onClick={() => openViewModal(restaurant)}
-                                            className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                                            className="p-2 text-gray-400 hover:text-primary hover:bg-secondary rounded-lg transition-colors"
                                             title="Voir"
                                         >
                                             <Eye className="w-4 h-4" />
                                         </button>
                                         <button
                                             onClick={() => openEditModal(restaurant)}
-                                            className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 rounded-lg transition-colors"
+                                            className="p-2 text-gray-400 hover:text-primary hover:bg-secondary rounded-lg transition-colors"
                                             title="Modifier"
                                         >
                                             <Edit className="w-4 h-4" />
                                         </button>
                                         <button
                                             onClick={() => openDeleteDialog(restaurant)}
-                                            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                                            className="p-2 text-gray-400 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                                             title="Supprimer"
                                         >
                                             <Trash2 className="w-4 h-4" />
@@ -658,7 +657,7 @@ export default function RestaurantsList() {
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2">
                                         <h3 className="font-semibold text-gray-900 dark:text-white">{restaurant.name}</h3>
-                                        {restaurant.is_verified && <CheckCircle className="w-4 h-4 text-green-500" />}
+                                        {restaurant.is_verified && <CheckCircle className="w-4 h-4 text-gray-900 dark:text-white" />}
                                     </div>
                                     <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{restaurant.address}</p>
                                 </div>
@@ -669,27 +668,27 @@ export default function RestaurantsList() {
                                     <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
                                     <span className="font-semibold">{restaurant.rating}</span>
                                 </div>
-                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${restaurant.is_open ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                <span className={`px-2 py-1 text-xs font-medium rounded-full ${restaurant.is_open ? 'bg-gray-100 text-gray-900' : 'bg-gray-200 text-gray-500'}`}>
                                     {restaurant.is_open ? 'Ouvert' : 'Fermé'}
                                 </span>
                                 <div className="flex gap-1">
                                     <button
                                         onClick={() => openViewModal(restaurant)}
-                                        className="p-2 text-gray-400 hover:text-blue-600 rounded-lg transition-colors"
+                                        className="p-2 text-gray-400 hover:text-primary rounded-lg transition-colors"
                                         title="Voir"
                                     >
                                         <Eye className="w-4 h-4" />
                                     </button>
                                     <button
                                         onClick={() => openEditModal(restaurant)}
-                                        className="p-2 text-gray-400 hover:text-green-600 rounded-lg transition-colors"
+                                        className="p-2 text-gray-400 hover:text-primary rounded-lg transition-colors"
                                         title="Modifier"
                                     >
                                         <Edit className="w-4 h-4" />
                                     </button>
                                     <button
                                         onClick={() => openDeleteDialog(restaurant)}
-                                        className="p-2 text-gray-400 hover:text-red-600 rounded-lg transition-colors"
+                                        className="p-2 text-gray-400 hover:text-destructive rounded-lg transition-colors"
                                         title="Supprimer"
                                     >
                                         <Trash2 className="w-4 h-4" />

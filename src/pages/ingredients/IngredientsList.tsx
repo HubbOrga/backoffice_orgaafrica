@@ -129,12 +129,12 @@ const INITIAL_INGREDIENTS: Ingredient[] = [
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
-    'Légumes': 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400',
-    'Viandes': 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
-    'Huiles': 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400',
-    'Céréales': 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
-    'Épices': 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400',
-    'Poissons': 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+    'Légumes': 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
+    'Viandes': 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
+    'Huiles': 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
+    'Céréales': 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
+    'Épices': 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
+    'Poissons': 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100',
 };
 
 const CATEGORIES = ['Légumes', 'Viandes', 'Huiles', 'Céréales', 'Épices', 'Poissons'];
@@ -292,7 +292,7 @@ function IngredientForm({ ingredient, onSubmit, onCancel }: IngredientFormProps)
                 </button>
                 <button
                     type="submit"
-                    className="flex-1 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-medium transition-all"
+                    className="flex-1 px-4 py-2.5 bg-primary text-primary-foreground hover:opacity-90 rounded-xl font-medium transition-all"
                 >
                     {ingredient ? 'Modifier' : 'Créer'}
                 </button>
@@ -313,9 +313,9 @@ interface IngredientDetailProps {
 function IngredientDetail({ ingredient, onClose }: IngredientDetailProps) {
     const getStockStatus = (current: number, min: number) => {
         const percentage = (current / min) * 100;
-        if (percentage < 50) return { status: 'critical', label: 'Critique', color: 'text-red-500' };
-        if (percentage < 100) return { status: 'low', label: 'Bas', color: 'text-orange-500' };
-        return { status: 'good', label: 'OK', color: 'text-green-500' };
+        if (percentage < 50) return { status: 'critical', label: 'Critique', color: 'text-gray-900 font-bold' };
+        if (percentage < 100) return { status: 'low', label: 'Bas', color: 'text-gray-700' };
+        return { status: 'good', label: 'OK', color: 'text-gray-500' };
     };
 
     const stockStatus = getStockStatus(ingredient.stock_quantity, ingredient.min_stock);
@@ -324,7 +324,7 @@ function IngredientDetail({ ingredient, onClose }: IngredientDetailProps) {
         <div className="space-y-6">
             {/* Header */}
             <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white">
+                <div className="w-16 h-16 rounded-xl bg-primary text-primary-foreground flex items-center justify-center">
                     <ChefHat className="w-8 h-8" />
                 </div>
                 <div>
@@ -421,9 +421,9 @@ export default function IngredientsList() {
 
     const getStockStatus = (current: number, min: number) => {
         const percentage = (current / min) * 100;
-        if (percentage < 50) return { status: 'critical', label: 'Critique', color: 'text-red-500', bg: 'bg-red-500' };
-        if (percentage < 100) return { status: 'low', label: 'Bas', color: 'text-orange-500', bg: 'bg-orange-500' };
-        return { status: 'good', label: 'OK', color: 'text-green-500', bg: 'bg-green-500' };
+        if (percentage < 50) return { status: 'critical', label: 'Critique', color: 'text-gray-900 font-bold', bg: 'bg-gray-900' };
+        if (percentage < 100) return { status: 'low', label: 'Bas', color: 'text-gray-700', bg: 'bg-gray-700' };
+        return { status: 'good', label: 'OK', color: 'text-gray-500', bg: 'bg-gray-500' };
     };
 
     const lowStockCount = ingredients.filter(i => i.stock_quantity < i.min_stock).length;
@@ -489,7 +489,7 @@ export default function IngredientsList() {
                 </div>
                 <button
                     onClick={() => setIsCreateModalOpen(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-medium rounded-xl transition-all duration-300 shadow-lg hover:shadow-purple-500/25"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground hover:opacity-90 font-medium rounded-xl transition-all duration-300 shadow-lg"
                 >
                     <Plus className="w-5 h-5" />
                     Ajouter un ingrédient
@@ -500,8 +500,8 @@ export default function IngredientsList() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                            <Package className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                        <div className="p-2 bg-secondary rounded-lg">
+                            <Package className="w-5 h-5 text-primary" />
                         </div>
                         <div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">Total Ingrédients</p>
@@ -511,19 +511,19 @@ export default function IngredientsList() {
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
-                            <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                        <div className="p-2 bg-secondary rounded-lg">
+                            <AlertTriangle className="w-5 h-5 text-primary" />
                         </div>
                         <div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">Stock Bas</p>
-                            <p className="text-xl font-bold text-red-600">{lowStockCount}</p>
+                            <p className="text-xl font-bold text-primary">{lowStockCount}</p>
                         </div>
                     </div>
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                            <BarChart3 className="w-5 h-5 text-green-600 dark:text-green-400" />
+                        <div className="p-2 bg-secondary rounded-lg">
+                            <BarChart3 className="w-5 h-5 text-primary" />
                         </div>
                         <div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">Valeur Stock</p>
@@ -533,8 +533,8 @@ export default function IngredientsList() {
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                            <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                        <div className="p-2 bg-secondary rounded-lg">
+                            <TrendingUp className="w-5 h-5 text-primary" />
                         </div>
                         <div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">Catégories</p>
@@ -615,7 +615,7 @@ export default function IngredientsList() {
                                         <tr key={ingredient.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white">
+                                                    <div className="w-10 h-10 rounded-lg bg-primary text-primary-foreground flex items-center justify-center">
                                                         <ChefHat className="w-5 h-5" />
                                                     </div>
                                                     <div>
@@ -669,21 +669,21 @@ export default function IngredientsList() {
                                                 <div className="flex items-center justify-end gap-2">
                                                     <button
                                                         onClick={() => openViewModal(ingredient)}
-                                                        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
+                                                        className="p-2 text-gray-400 hover:text-primary hover:bg-secondary rounded-lg transition-colors"
                                                         title="Voir"
                                                     >
                                                         <Eye className="w-4 h-4" />
                                                     </button>
                                                     <button
                                                         onClick={() => openEditModal(ingredient)}
-                                                        className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/30 rounded-lg transition-colors"
+                                                        className="p-2 text-gray-400 hover:text-primary hover:bg-secondary rounded-lg transition-colors"
                                                         title="Modifier"
                                                     >
                                                         <Edit className="w-4 h-4" />
                                                     </button>
                                                     <button
                                                         onClick={() => openDeleteDialog(ingredient)}
-                                                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+                                                        className="p-2 text-gray-400 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
                                                         title="Supprimer"
                                                     >
                                                         <Trash2 className="w-4 h-4" />

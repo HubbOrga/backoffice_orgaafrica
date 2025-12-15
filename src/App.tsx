@@ -8,6 +8,7 @@ import UsersList from './pages/users/UsersList';
 import IngredientsList from './pages/ingredients/IngredientsList';
 import RestaurantsList from './pages/restaurants/RestaurantsList';
 import PromotionsList from './pages/promotions/PromotionsList';
+import RolesList from './pages/roles/RolesList';
 
 // ============================================
 // MODE FRONT-END ONLY - PAS DE BACKEND REQUIS
@@ -24,6 +25,7 @@ function App() {
             <Route element={<DashboardLayout />}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/users" element={<UsersList />} />
+              <Route path="/roles" element={<RolesList />} />
               <Route path="/ingredients" element={<IngredientsList />} />
               <Route path="/restaurants" element={<RestaurantsList />} />
               <Route path="/promotions" element={<PromotionsList />} />

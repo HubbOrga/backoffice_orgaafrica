@@ -23,15 +23,15 @@ export default function ConfirmDialog({
     type = 'danger'
 }: ConfirmDialogProps) {
     const buttonColors = {
-        danger: 'bg-red-600 hover:bg-red-700',
-        warning: 'bg-yellow-600 hover:bg-yellow-700',
-        info: 'bg-blue-600 hover:bg-blue-700'
+        danger: 'bg-black hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200',
+        warning: 'bg-gray-700 hover:bg-gray-600 dark:bg-gray-300 dark:text-black dark:hover:bg-gray-400',
+        info: 'bg-gray-900 hover:bg-gray-800 dark:bg-gray-100 dark:text-black dark:hover:bg-gray-300'
     };
 
     const iconColors = {
-        danger: 'text-red-600 bg-red-100 dark:bg-red-900/30',
-        warning: 'text-yellow-600 bg-yellow-100 dark:bg-yellow-900/30',
-        info: 'text-blue-600 bg-blue-100 dark:bg-blue-900/30'
+        danger: 'text-black bg-gray-100 dark:text-white dark:bg-gray-800',
+        warning: 'text-gray-700 bg-gray-100 dark:text-gray-300 dark:bg-gray-800',
+        info: 'text-gray-900 bg-gray-100 dark:text-gray-100 dark:bg-gray-800'
     };
 
     return (
