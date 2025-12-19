@@ -47,7 +47,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
     const [isLoading, setIsLoading] = useState(false);
 
-    const login = async (_credentials: { email: string; password: string }) => {
+    const login = async (credentials: { email: string; password: string }) => {
+        console.log('Logging in with:', credentials.email);
         setIsLoading(true);
         // Simulation d'un délai réseau
         await new Promise(resolve => setTimeout(resolve, 500));

@@ -130,7 +130,7 @@ const INITIAL_PROMOTIONS: Promotion[] = [
     }
 ];
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
+const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ElementType }> = {
     active: { label: 'Active', color: 'bg-black text-white dark:bg-white dark:text-black', icon: CheckCircle },
     scheduled: { label: 'Planifiée', color: 'bg-gray-700 text-white dark:bg-gray-300 dark:text-black', icon: Calendar },
     paused: { label: 'En pause', color: 'bg-gray-500 text-white dark:bg-gray-500 dark:text-white', icon: Pause },

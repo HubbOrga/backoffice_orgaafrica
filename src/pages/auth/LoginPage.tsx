@@ -20,7 +20,7 @@ export default function LoginPage() {
             // Mode Front-end: Connexion simulée
             await login({ email, password });
             navigate('/');
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error(err);
             setError('Échec de la connexion');
         } finally {
@@ -56,7 +56,7 @@ export default function LoginPage() {
                     {/* Demo banner */}
                     <div className="mb-6 p-3 rounded-xl bg-gray-800 border border-gray-700">
                         <p className="text-gray-300 text-xs text-center">
-                            🎨 <strong>Mode Démo Front-end</strong> — Entrez n'importe quels identifiants pour accéder
+                            <strong>Mode Démo Front-end</strong> — Entrez n'importe quels identifiants pour accéder
                         </p>
                     </div>
 

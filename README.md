@@ -34,3 +34,26 @@ Pour vous connecter, assurez-vous que le backend tourne sur `http://localhost:30
 Identifiants par défaut :
 - **Email** : `admin@orga.africa`
 - **Password** : `Admin123!`
+
+## 🐳 Déploiement avec Docker
+
+Pour faciliter le déploiement, un `Dockerfile` et un `docker-compose.yml` sont fournis.
+
+### Utilisation de Docker Compose
+
+```bash
+# Construire et démarrer l'application
+docker-compose up -d --build
+```
+
+L'application sera accessible sur `http://localhost:8080`.
+
+### Utilisation du Dockerfile seul
+
+```bash
+# Construire l'image
+docker build -t orga-back-office .
+
+# Lancer le conteneur
+docker run -p 8080:80 orga-back-office
+```
