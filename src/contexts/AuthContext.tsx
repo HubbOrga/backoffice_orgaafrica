@@ -26,7 +26,7 @@ const MOCK_USER: User = {
     avatar: undefined,
     email_verified: true,
     created_at: new Date().toISOString(),
-    role: 'admin'
+    role: 'Head of OrgaAfrica'
 };
 
 interface AuthContextType {
