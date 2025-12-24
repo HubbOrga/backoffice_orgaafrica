@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Utensils,
     Search,
@@ -11,7 +12,8 @@ import {
     Edit,
     Trash2,
     Eye,
-    Filter
+    Filter,
+    LayoutDashboard
 } from 'lucide-react';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
@@ -380,6 +382,7 @@ function RestaurantDetail({ restaurant, onClose }: RestaurantDetailProps) {
 // ============================================
 
 export default function RestaurantsList() {
+    const navigate = useNavigate();
     const [restaurants, setRestaurants] = useState<Restaurant[]>(INITIAL_RESTAURANTS);
     const [searchQuery, setSearchQuery] = useState('');
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -625,11 +628,11 @@ export default function RestaurantsList() {
                                             <Edit className="w-4 h-4" />
                                         </button>
                                         <button
-                                            onClick={() => openDeleteDialog(restaurant)}
-                                            className="p-2 text-gray-400 hover:text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
-                                            title="Supprimer"
+                                            onClick={() => navigate(`/?merchant=${restaurant.id}`)}
+                                            className="p-2 text-gray-400 hover:text-primary hover:bg-secondary rounded-lg transition-colors"
+                                            title="Dashboard"
                                         >
-                                            <Trash2 className="w-4 h-4" />
+                                            <LayoutDashboard className="w-4 h-4" />
                                         </button>
                                     </div>
                                     <button
@@ -685,6 +688,13 @@ export default function RestaurantsList() {
                                         title="Modifier"
                                     >
                                         <Edit className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        onClick={() => navigate(`/?merchant=${restaurant.id}`)}
+                                        className="p-2 text-gray-400 hover:text-primary rounded-lg transition-colors"
+                                        title="Dashboard"
+                                    >
+                                        <LayoutDashboard className="w-4 h-4" />
                                     </button>
                                     <button
                                         onClick={() => openDeleteDialog(restaurant)}
