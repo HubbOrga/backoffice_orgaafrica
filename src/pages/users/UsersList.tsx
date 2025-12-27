@@ -16,97 +16,17 @@ import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
 import { ToastContainer, useToast } from '../../components/ui/Toast';
 
-// ============================================
-// TYPES
-// ============================================
+import type { User } from '../../types';
+import { INITIAL_USERS, MOCK_ROLES, ROLE_COLORS } from '../../data/mockData';
 
-interface User {
-    id: string;
-    username: string;
-    fullname: string;
-    email: string;
-    phone: string;
-    role: string;
-    email_verified: boolean;
-    created_at: string;
-    avatar: string | null;
-}
-
-// ============================================
-// DONNÉES MOCKÉES INITIALES
-// ============================================
-
-const INITIAL_USERS: User[] = [
-    {
-        id: '1',
-        username: 'john_doe',
-        fullname: 'John Doe',
-        email: 'john.doe@email.com',
-        phone: '+228 90 12 34 56',
-        role: 'admin',
-        email_verified: true,
-        created_at: '2024-01-15',
-        avatar: null
-    },
-    {
-        id: '2',
-        username: 'marie_curie',
-        fullname: 'Marie Curie',
-        email: 'marie.curie@email.com',
-        phone: '+228 91 23 45 67',
-        role: 'manager',
-        email_verified: true,
-        created_at: '2024-02-20',
-        avatar: null
-    },
-    {
-        id: '3',
-        username: 'albert_e',
-        fullname: 'Albert Einstein',
-        email: 'albert.e@email.com',
-        phone: '+228 92 34 56 78',
-        role: 'user',
-        email_verified: false,
-        created_at: '2024-03-10',
-        avatar: null
-    },
-    {
-        id: '4',
-        username: 'ada_love',
-        fullname: 'Ada Lovelace',
-        email: 'ada.love@email.com',
-        phone: '+228 93 45 67 89',
-        role: 'restaurant_owner',
-        email_verified: true,
-        created_at: '2024-03-25',
-        avatar: null
-    },
-    {
-        id: '5',
-        username: 'nikola_t',
-        fullname: 'Nikola Tesla',
-        email: 'nikola.t@email.com',
-        phone: '+228 94 56 78 90',
-        role: 'user',
-        email_verified: true,
-        created_at: '2024-04-05',
-        avatar: null
-    },
-];
-
-const ROLE_BADGES: Record<string, { label: string; color: string }> = {
-    admin: { label: 'Admin', color: 'bg-black text-white dark:bg-white dark:text-black' },
-    manager: { label: 'Manager', color: 'bg-gray-800 text-white dark:bg-gray-200 dark:text-black' },
-    restaurant_owner: { label: 'Propriétaire', color: 'bg-gray-600 text-white dark:bg-gray-400 dark:text-black' },
-    user: { label: 'Utilisateur', color: 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-100' },
+// Helper to get role details
+const getRoleDetails = (roleId: string) => {
+    const role = MOCK_ROLES.find(r => r.id === roleId);
+    return {
+        label: role?.name || 'Inconnu',
+        color: ROLE_COLORS[roleId] || 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+    };
 };
-
-const ROLES = [
-    { value: 'admin', label: 'Admin' },
-    { value: 'manager', label: 'Manager' },
-    { value: 'restaurant_owner', label: 'Propriétaire' },
-    { value: 'user', label: 'Utilisateur' },
-];
 
 // ============================================
 // COMPOSANT FORMULAIRE UTILISATEUR
@@ -124,7 +44,7 @@ function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
         fullname: user?.fullname || '',
         email: user?.email || '',
         phone: user?.phone || '',
-        role: user?.role || 'user',
+        role: user?.role || MOCK_ROLES[0]?.id || '5',
         email_verified: user?.email_verified || false,
         avatar: user?.avatar || null,
     });
@@ -197,8 +117,8 @@ function UserForm({ user, onSubmit, onCancel }: UserFormProps) {
                         onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                         className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
                     >
-                        {ROLES.map(role => (
-                            <option key={role.value} value={role.value}>{role.label}</option>
+                        {MOCK_ROLES.map(role => (
+                            <option key={role.id} value={role.id}>{role.name}</option>
                         ))}
                     </select>
                 </div>
@@ -279,8 +199,8 @@ function UserDetail({ user, onClose }: UserDetailProps) {
                     <Shield className="w-5 h-5 text-gray-400" />
                     <div>
                         <p className="text-xs text-gray-500 dark:text-gray-400">Rôle</p>
-                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${ROLE_BADGES[user.role]?.color}`}>
-                            {ROLE_BADGES[user.role]?.label}
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${getRoleDetails(user.role).color}`}>
+                            {getRoleDetails(user.role).label}
                         </span>
                     </div>
                 </div>
@@ -430,10 +350,9 @@ export default function UsersList() {
                         className="px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                     >
                         <option value="all">Tous les rôles</option>
-                        <option value="admin">Admin</option>
-                        <option value="manager">Manager</option>
-                        <option value="restaurant_owner">Propriétaire</option>
-                        <option value="user">Utilisateur</option>
+                        {MOCK_ROLES.map(role => (
+                            <option key={role.id} value={role.id}>{role.name}</option>
+                        ))}
                     </select>
                 </div>
             </div>
@@ -502,9 +421,9 @@ export default function UsersList() {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${ROLE_BADGES[user.role]?.color || ROLE_BADGES.user.color}`}>
+                                            <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${getRoleDetails(user.role).color}`}>
                                                 <Shield className="w-3 h-3" />
-                                                {ROLE_BADGES[user.role]?.label || 'Utilisateur'}
+                                                {getRoleDetails(user.role).label}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">

@@ -1,86 +1,8 @@
 import { useState } from 'react';
 import { Plus, Shield, Edit, Trash2, Check } from 'lucide-react';
 
-interface Permission {
-    id: string;
-    name: string;
-    description: string;
-    module: string;
-}
-
-interface Role {
-    id: string;
-    name: string;
-    description: string;
-    permissions: string[]; // Permission IDs
-    usersCount: number;
-}
-
-const AVAILABLE_PERMISSIONS: Permission[] = [
-    { id: 'analytics.view', name: 'Voir Statistiques Globales', description: 'Accès complet aux dashboards analytics', module: 'Analytics' },
-    { id: 'analytics.department', name: 'Voir Statistiques Département', description: 'Accès aux stats de son propre département', module: 'Analytics' },
-    { id: 'analytics.personal', name: 'Voir Statistiques Personnelles', description: 'Accès uniquement à ses propres stats', module: 'Analytics' },
-    { id: 'growth.manage', name: 'Gérer KPIs Croissance', description: 'Accès aux outils marketing et KPIs', module: 'Croissance' },
-    { id: 'users.read', name: 'Voir Utilisateurs', description: 'Consulter la liste des utilisateurs', module: 'Utilisateurs' },
-    { id: 'users.write', name: 'Gérer Utilisateurs', description: 'Créer, modifier et supprimer des utilisateurs', module: 'Utilisateurs' },
-    { id: 'restaurants.read', name: 'Voir Marchands', description: 'Consulter la liste des marchands', module: 'Marchands' },
-    { id: 'restaurants.write', name: 'Gérer Marchands', description: 'Gérer les fiches marchands', module: 'Marchands' },
-    { id: 'ops.daily', name: 'Gestion Opérationnelle', description: 'Tâches quotidiennes et stocks', module: 'Opérations' },
-    { id: 'ops.assigned', name: 'Tâches Assignées', description: 'Accès uniquement aux tâches assignées', module: 'Opérations' },
-    { id: 'roles.manage', name: 'Gérer les Rôles', description: 'Modifier les permissions du système', module: 'Administration' },
-];
-
-const MOCK_ROLES: Role[] = [
-    {
-        id: '1',
-        name: 'Head of OrgaAfrica',
-        description: 'Accès total au système (Super Admin)',
-        permissions: AVAILABLE_PERMISSIONS.map(p => p.id),
-        usersCount: 1
-    },
-    {
-        id: '2',
-        name: 'Chef de Pôle',
-        description: 'Accès aux statistiques et à la gestion de son département',
-        permissions: ['analytics.department', 'users.read', 'restaurants.read', 'ops.daily'],
-        usersCount: 4
-    },
-    {
-        id: '3',
-        name: 'Responsable Progression',
-        description: 'Focus sur les KPIs de croissance, marketing et analytics globaux',
-        permissions: ['analytics.view', 'growth.manage', 'restaurants.read'],
-        usersCount: 2
-    },
-    {
-        id: '4',
-        name: 'Staff',
-        description: 'Gestion opérationnelle quotidienne et support',
-        permissions: ['users.read', 'restaurants.read', 'ops.daily'],
-        usersCount: 8
-    },
-    {
-        id: '5',
-        name: 'Employé',
-        description: 'Accès restreint aux tâches assignées',
-        permissions: ['ops.assigned', 'restaurants.read'],
-        usersCount: 15
-    },
-    {
-        id: '6',
-        name: 'Stagiaire',
-        description: 'Accès consultation uniquement (Lecture seule)',
-        permissions: ['users.read', 'restaurants.read'],
-        usersCount: 5
-    },
-    {
-        id: '7',
-        name: 'Influenceur',
-        description: 'Accès limité à ses propres statistiques de conversion',
-        permissions: ['analytics.personal'],
-        usersCount: 12
-    }
-];
+import type { Permission, Role } from '../../types';
+import { AVAILABLE_PERMISSIONS, MOCK_ROLES } from '../../data/mockData';
 
 export default function RolesList() {
     const [roles, setRoles] = useState<Role[]>(MOCK_ROLES);

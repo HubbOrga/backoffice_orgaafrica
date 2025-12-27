@@ -10,11 +10,10 @@ import {
     Filter,
     Download,
     Calendar,
-    UserCheck,
+
     XCircle,
     Utensils,
-    ChevronUp,
-    ChevronDown,
+
     Search,
     MoreHorizontal,
     ArrowRight,
@@ -26,7 +25,7 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
-    Legend,
+
     ResponsiveContainer,
     AreaChart,
     Area,
@@ -34,6 +33,7 @@ import {
     Pie,
     Cell
 } from 'recharts';
+import { INITIAL_RESTAURANTS } from '../../data/mockData';
 
 // ============================================
 // DONNÉES MOCKÉES POUR LE DASHBOARD
@@ -64,14 +64,11 @@ const MOCK_USERS = [
     { id: 8, name: 'Moussa Fofana', email: 'moussa.fofana@email.com', type: 'Orga Pro', status: 'Régulier', orders: 35, cancelled: 2, revenue: 525000, lastRestaurant: 'Sushi Master', avatar: 'MF' },
 ];
 
+
+
 const MOCK_MERCHANTS = [
     { id: 'all', name: 'Tous les restaurants' },
-    { id: '1', name: 'Le Petit Bistro' },
-    { id: '2', name: 'Pizza Palace' },
-    { id: '3', name: 'Sushi Master' },
-    { id: '4', name: 'Chez Mama' },
-    { id: '5', name: 'Burger Express' },
-    { id: '6', name: 'Wok & Roll' },
+    ...INITIAL_RESTAURANTS.map(r => ({ id: r.id, name: r.name }))
 ];
 
 const RESTAURANT_PERFORMANCE = [
@@ -86,7 +83,7 @@ export default function Dashboard() {
     const [searchParams] = useSearchParams();
     const [selectedMerchant, setSelectedMerchant] = useState('all');
     const [timeRange, setTimeRange] = useState('30d');
-    const [activeFilter, setActiveFilter] = useState<'all' | 'orga' | 'orgaPro' | 'regular'>('all');
+    const [activeFilter] = useState<'all' | 'orga' | 'orgaPro' | 'regular'>('all');
     const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
 
