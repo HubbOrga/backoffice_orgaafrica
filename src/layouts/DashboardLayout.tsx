@@ -3,7 +3,6 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import {
     LayoutDashboard,
-    Users,
     Utensils,
     ChefHat,
     Megaphone,
@@ -12,7 +11,6 @@ import {
     Menu,
     X,
     Bell,
-    Shield,
     Search
 } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -24,8 +22,6 @@ export default function DashboardLayout() {
 
     const navigation = [
         { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-        { name: 'Utilisateurs', href: '/users', icon: Users },
-        { name: 'Rôles & Permissions', href: '/roles', icon: Shield },
         { name: 'Restaurants', href: '/restaurants', icon: Utensils },
         { name: 'Ingrédients', href: '/ingredients', icon: ChefHat },
         { name: 'Promotions', href: '/promotions', icon: Megaphone },

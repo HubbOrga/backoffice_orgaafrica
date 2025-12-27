@@ -9,6 +9,7 @@ import IngredientsList from './pages/ingredients/IngredientsList';
 import RestaurantsList from './pages/restaurants/RestaurantsList';
 import PromotionsList from './pages/promotions/PromotionsList';
 import RolesList from './pages/roles/RolesList';
+import Settings from './pages/settings/Settings';
 
 // ============================================
 // MODE FRONT-END ONLY - PAS DE BACKEND REQUIS
@@ -29,6 +30,7 @@ function App() {
               <Route path="/ingredients" element={<IngredientsList />} />
               <Route path="/restaurants" element={<RestaurantsList />} />
               <Route path="/promotions" element={<PromotionsList />} />
+              <Route path="/settings" element={<Settings />} />
             </Route>
           </Route>
 
