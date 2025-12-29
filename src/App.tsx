@@ -10,6 +10,7 @@ import RestaurantsList from './pages/restaurants/RestaurantsList';
 import PromotionsList from './pages/promotions/PromotionsList';
 import RolesList from './pages/roles/RolesList';
 import Settings from './pages/settings/Settings';
+import OrdersStatistics from './pages/orders/OrdersStatistics';
 
 // ============================================
 // MODE FRONT-END ONLY - PAS DE BACKEND REQUIS
@@ -29,6 +30,7 @@ function App() {
               <Route path="/roles" element={<RolesList />} />
               <Route path="/ingredients" element={<IngredientsList />} />
               <Route path="/restaurants" element={<RestaurantsList />} />
+              <Route path="/orders" element={<OrdersStatistics />} />
               <Route path="/promotions" element={<PromotionsList />} />
               <Route path="/settings" element={<Settings />} />
             </Route>

@@ -11,7 +11,8 @@ import {
     Menu,
     X,
     Bell,
-    Search
+    Search,
+    ShoppingBag
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -23,6 +24,7 @@ export default function DashboardLayout() {
     const navigation = [
         { name: 'Dashboard', href: '/', icon: LayoutDashboard },
         { name: 'Restaurants', href: '/restaurants', icon: Utensils },
+        { name: 'Commandes', href: '/orders', icon: ShoppingBag },
         { name: 'Ingrédients', href: '/ingredients', icon: ChefHat },
         { name: 'Promotions', href: '/promotions', icon: Megaphone },
         { name: 'Paramètres', href: '/settings', icon: Settings },

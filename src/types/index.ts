@@ -65,3 +65,82 @@ export interface Promotion {
     usage_count: number;
     max_uses: number | null;
 }
+
+// ============================================
+// COMMANDES & MODULES LIÉS
+// ============================================
+
+export type OrderStatus = 'pending' | 'confirmed' | 'preparing' | 'ready' | 'delivered' | 'cancelled';
+
+export interface Order {
+    id: string;
+    restaurant_id: string;
+    restaurant_name: string;
+    user_id: string;
+    user_name: string;
+    status: OrderStatus;
+    total_amount: number;
+    created_at: string;
+    updated_at: string;
+    items: OrderItem[];
+    reservation_id?: string;
+    table_id?: string;
+    supplements?: Supplement[];
+}
+
+export interface OrderItem {
+    id: string;
+    name: string;
+    quantity: number;
+    unit_price: number;
+    total_price: number;
+}
+
+export type ReservationStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
+
+export interface Reservation {
+    id: string;
+    restaurant_id: string;
+    restaurant_name: string;
+    user_id: string;
+    user_name: string;
+    date: string;
+    time: string;
+    guests: number;
+    status: ReservationStatus;
+    table_id?: string;
+    special_requests?: string;
+    created_at: string;
+}
+
+export interface Table {
+    id: string;
+    restaurant_id: string;
+    table_number: string;
+    capacity: number;
+    status: 'available' | 'occupied' | 'reserved';
+    location: string;
+}
+
+export interface Supplement {
+    id: string;
+    name: string;
+    price: number;
+    category: string;
+}
+
+export interface OrderStatistics {
+    totalOrders: number;
+    cancelledOrders: number;
+    completedOrders: number;
+    pendingOrders: number;
+    totalRevenue: number;
+    averageOrderValue: number;
+}
+
+export interface MerchantOrderStatistics extends OrderStatistics {
+    restaurant_id: string;
+    restaurant_name: string;
+    totalReservations: number;
+    cancelledReservations: number;
+}
