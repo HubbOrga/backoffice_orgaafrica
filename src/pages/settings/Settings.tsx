@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ComponentType } from 'react';
 import {
     User,
     Settings as SettingsIcon,
@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast, ToastContainer } from '../../components/ui/Toast';
-import UsersList from '../users/UsersList';
+import TeamManagement from "../users/TeamManagement.tsx";
 import RolesList from '../roles/RolesList';
 
 // ============================================
@@ -28,7 +28,7 @@ type TabId = 'profile' | 'account' | 'notifications' | 'display' | 'security' | 
 interface Tab {
     id: TabId;
     label: string;
-    icon: any;
+    icon: ComponentType<{ className?: string }>;
     description: string;
 }
 
@@ -46,9 +46,17 @@ const TABS: Tab[] = [
 // SUB-COMPONENTS
 // ============================================
 
+interface ProfileData {
+    fullname: string;
+    username: string;
+    email: string;
+    phone: string;
+    bio?: string;
+}
+
 interface ProfileSettingsProps {
-    data: any;
-    onChange: (field: string, value: any) => void;
+    data: ProfileData;
+    onChange: (field: keyof ProfileData, value: string) => void;
 }
 
 function ProfileSettings({ data, onChange }: ProfileSettingsProps) {
@@ -130,9 +138,16 @@ function ProfileSettings({ data, onChange }: ProfileSettingsProps) {
     );
 }
 
+interface SecurityData {
+    currentPassword?: string;
+    newPassword?: string;
+    confirmPassword?: string;
+    twoFactorEnabled: boolean;
+}
+
 interface SecuritySettingsProps {
-    data: any;
-    onChange: (field: string, value: any) => void;
+    data: SecurityData;
+    onChange: (field: keyof SecurityData, value: string | boolean) => void;
 }
 
 function SecuritySettings({ data, onChange }: SecuritySettingsProps) {
@@ -200,7 +215,7 @@ function SecuritySettings({ data, onChange }: SecuritySettingsProps) {
 }
 
 interface NotificationSettingsProps {
-    data: any;
+    data: boolean[];
     onChange: (index: number, value: boolean) => void;
 }
 
@@ -238,9 +253,15 @@ function NotificationSettings({ data, onChange }: NotificationSettingsProps) {
     );
 }
 
+interface DisplayData {
+    theme: string;
+    language: string;
+    timezone: string;
+}
+
 interface DisplaySettingsProps {
-    data: any;
-    onChange: (field: string, value: any) => void;
+    data: DisplayData;
+    onChange: (field: keyof DisplayData, value: string) => void;
 }
 
 function DisplaySettings({ data, onChange }: DisplaySettingsProps) {
@@ -414,7 +435,7 @@ export default function Settings() {
                                 onChange={(field, value) => setProfileData({ ...profileData, [field]: value })}
                             />
                         )}
-                        {activeTab === 'users' && <UsersList />}
+                        {activeTab === 'users' && <TeamManagement />}
                         {activeTab === 'roles' && <RolesList />}
                         {activeTab === 'security' && (
                             <SecuritySettings

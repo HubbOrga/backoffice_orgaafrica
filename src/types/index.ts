@@ -1,3 +1,61 @@
+/** 
+ * TYPES GLOBAUX & ÉNUMÉRATIONS
+ */
+
+export type UUID = string;
+
+export const OrderStatus = {
+    PENDING: "PENDING",
+    PREPARING: "PREPARING",
+    COMPLETED: "COMPLETED",
+    CANCELLED: "CANCELLED"
+} as const;
+export type OrderStatus = typeof OrderStatus[keyof typeof OrderStatus];
+
+export const ReservationStatus = {
+    CONFIRMED: "CONFIRMED",
+    CANCELLED: "CANCELLED",
+    COMPLETED: "COMPLETED"
+} as const;
+export type ReservationStatus = typeof ReservationStatus[keyof typeof ReservationStatus];
+
+// --- MODULE : AUTH & USERS ---
+
+export interface AuthResponse {
+    accessToken: string;
+    refreshToken: string;
+    user: User;
+}
+
+export interface User {
+    id: UUID;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    role: string;
+    isActive: boolean;
+    createdAt: string;
+    avatar?: string | null;
+    username?: string; // API User has firstName/lastName, mock had username
+    fullname?: string; // UI helper
+}
+
+export interface OTPRequest {
+    phoneOrEmail: string;
+    method: "SMS" | "EMAIL";
+}
+
+// --- MODULE : RBAC (Rôles & Permissions) ---
+
+export interface Role {
+    id: UUID;
+    name: string;
+    description?: string;
+    permissions: string[]; // Liste des slugs de permissions
+    usersCount?: number;
+}
+
 export interface Permission {
     id: string;
     name: string;
@@ -5,130 +63,174 @@ export interface Permission {
     module: string;
 }
 
-export interface Role {
-    id: string;
+// --- MODULE : CATALOGUE (Menu, Categories, etc.) ---
+
+export interface Category {
+    id: UUID;
+    name: string;
+    description?: string;
+    image?: string;
+    subcategories?: Subcategory[];
+}
+
+export interface Subcategory {
+    id: UUID;
+    categoryId: UUID;
+    name: string;
+}
+
+export interface MenuItem {
+    id: UUID;
+    merchantId: UUID;
+    categoryId: UUID;
+    subcategoryId?: UUID;
     name: string;
     description: string;
-    permissions: string[]; // Permission IDs
-    usersCount: number;
-}
-
-export interface User {
-    id: string;
-    username: string;
-    fullname: string;
-    email: string;
-    phone: string;
-    role: string; // Role ID or Role Name (we should probably use Role ID, but current UsersList uses string keys like 'admin')
-    email_verified: boolean;
-    created_at: string;
-    avatar: string | null;
-}
-
-export interface Restaurant {
-    id: string;
-    name: string;
-    address: string;
-    phone: string;
-    cuisine: string;
-    rating: number;
-    reviews: number;
-    is_verified: boolean;
-    is_open: boolean;
-    opening_hours: string;
-    image: string;
-}
-
-export interface Ingredient {
-    id: string;
-    name: string;
-    category: string;
-    unit: string;
-    stock_quantity: number;
-    min_stock: number;
-    price_per_unit: number;
-    supplier: string;
-    last_restock: string;
-}
-
-export interface Promotion {
-    id: string;
-    name: string;
-    description: string;
-    discount_type: string;
-    discount_value: number;
-    code: string;
-    restaurant: string;
-    start_date: string;
-    end_date: string;
-    status: string;
-    usage_count: number;
-    max_uses: number | null;
-}
-
-// ============================================
-// COMMANDES & MODULES LIÉS
-// ============================================
-
-export type OrderStatus = 'pending' | 'confirmed' | 'preparing' | 'ready' | 'delivered' | 'cancelled';
-
-export interface Order {
-    id: string;
-    restaurant_id: string;
-    restaurant_name: string;
-    user_id: string;
-    user_name: string;
-    status: OrderStatus;
-    total_amount: number;
-    created_at: string;
-    updated_at: string;
-    items: OrderItem[];
-    reservation_id?: string;
-    table_id?: string;
-    supplements?: Supplement[];
-}
-
-export interface OrderItem {
-    id: string;
-    name: string;
-    quantity: number;
-    unit_price: number;
-    total_price: number;
-}
-
-export type ReservationStatus = 'pending' | 'confirmed' | 'cancelled' | 'completed';
-
-export interface Reservation {
-    id: string;
-    restaurant_id: string;
-    restaurant_name: string;
-    user_id: string;
-    user_name: string;
-    date: string;
-    time: string;
-    guests: number;
-    status: ReservationStatus;
-    table_id?: string;
-    special_requests?: string;
-    created_at: string;
-}
-
-export interface Table {
-    id: string;
-    restaurant_id: string;
-    table_number: string;
-    capacity: number;
-    status: 'available' | 'occupied' | 'reserved';
-    location: string;
+    price: number;
+    image?: string;
+    isAvailable: boolean;
+    preparationTime?: number;
+    supplements?: string[]; // IDs of supplements
 }
 
 export interface Supplement {
-    id: string;
+    id: UUID;
     name: string;
     price: number;
-    category: string;
+    isAvailable: boolean;
+    category?: string;
 }
 
+export interface Promotion {
+    id: UUID;
+    title?: string; // API title
+    name?: string; // UI name (alias for title)
+    description: string;
+    discountPercentage?: number;
+    discount_type?: string;
+    discount_value?: number;
+    code?: string;
+    restaurant?: string;
+    startDate: string;
+    endDate: string;
+    isActive: boolean;
+    status?: string;
+    usage_count?: number;
+    max_uses?: number | null;
+}
+
+// --- MODULE : MARCHANDS & STAFF ---
+
+export interface Merchant {
+    id: UUID;
+    name: string;
+    description: string;
+    address: string;
+    logo?: string;
+    banner?: string;
+    contactEmail: string;
+    contactPhone: string;
+    openingHours: Record<string, string>; // Ex: { "monday": "09:00-18:00" }
+}
+
+export interface Restaurant extends Merchant {
+    rating?: number;
+    reviews?: number;
+    is_open?: boolean;
+    cuisine?: string;
+    image?: string; // Alias for logo
+    is_verified?: boolean;
+    opening_hours?: string; // Alias for openingHours (UI uses string)
+    phone?: string; // Alias for contactPhone
+}
+
+export interface StaffMember {
+    id: UUID;
+    merchantId: UUID;
+    userId: UUID;
+    merchantRoleId: UUID;
+    user?: User;
+    roleName?: string; // UI helper
+}
+
+export interface MerchantRole {
+    id: UUID;
+    merchantId: UUID;
+    name: string;
+    permissions: string[];
+}
+
+// --- MODULE : OPÉRATIONS (Tables, Reservations, Orders) ---
+
+export interface Table {
+    id: UUID;
+    merchantId: UUID;
+    tableNumber: string;
+    capacity: number;
+    isAvailable: boolean;
+    status?: 'available' | 'occupied' | 'reserved'; // UI helper
+    location?: string;
+}
+
+export interface Reservation {
+    id: UUID;
+    merchantId: UUID;
+    userId: UUID;
+    tableId?: UUID;
+    reservationTime: string;
+    guestCount: number;
+    status: ReservationStatus;
+    note?: string;
+    restaurant_name?: string; // UI helper
+    user_name?: string; // UI helper
+    date?: string; // UI helper (reservationTime is ISO)
+    time?: string; // UI helper
+    guests?: number; // guestCount in API
+}
+
+export interface Order {
+    id: UUID;
+    orderNumber: string;
+    customerId: UUID;
+    merchantId: UUID;
+    tableId?: UUID;
+    items: OrderItem[];
+    totalPrice: number;
+    status: OrderStatus;
+    createdAt: string;
+    restaurant_name?: string; // UI helper
+    user_name?: string; // UI helper
+}
+
+export interface OrderItem {
+    menuItemId: UUID;
+    quantity: number;
+    unitPrice: number;
+    selectedSupplements?: UUID[];
+    id?: string;
+    name?: string;
+    total_price?: number;
+}
+
+export interface Invoice {
+    id: UUID;
+    orderId: UUID;
+    invoiceNumber: string;
+    amount: number;
+    pdfUrl?: string;
+    issuedAt: string;
+}
+
+// --- MODULE : PRÉFÉRENCES ---
+
+export interface Favorite {
+    id: UUID;
+    userId: UUID;
+    merchantId?: UUID;
+    menuItemId?: UUID;
+}
+
+// UI Specific Types
 export interface OrderStatistics {
     totalOrders: number;
     cancelledOrders: number;
@@ -143,4 +245,17 @@ export interface MerchantOrderStatistics extends OrderStatistics {
     restaurant_name: string;
     totalReservations: number;
     cancelledReservations: number;
+}
+
+// Keeping Ingredient for now to avoid breaking anything that might still use it
+export interface Ingredient {
+    id: string;
+    name: string;
+    category: string;
+    unit: string;
+    stock_quantity: number;
+    min_stock: number;
+    price_per_unit: number;
+    supplier: string;
+    last_restock: string;
 }

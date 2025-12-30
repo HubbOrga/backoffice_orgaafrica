@@ -82,9 +82,10 @@ function PromotionForm({ promotion, onSubmit, onCancel }: PromotionFormProps) {
         discount_value: promotion?.discount_value || 0,
         code: promotion?.code || '',
         restaurant: promotion?.restaurant || RESTAURANTS[0],
-        start_date: promotion?.start_date || new Date().toISOString().split('T')[0],
-        end_date: promotion?.end_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+        startDate: promotion?.startDate || new Date().toISOString().split('T')[0],
+        endDate: promotion?.endDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         status: promotion?.status || 'active',
+        isActive: promotion?.isActive ?? true,
         max_uses: promotion?.max_uses || null,
     });
 
@@ -223,8 +224,8 @@ function PromotionForm({ promotion, onSubmit, onCancel }: PromotionFormProps) {
                     </label>
                     <input
                         type="date"
-                        value={formData.start_date}
-                        onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                        value={formData.startDate}
+                        onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
                         className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
                         required
                     />
@@ -235,8 +236,8 @@ function PromotionForm({ promotion, onSubmit, onCancel }: PromotionFormProps) {
                     </label>
                     <input
                         type="date"
-                        value={formData.end_date}
-                        onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                        value={formData.endDate}
+                        onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
                         className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
                         required
                     />
@@ -286,12 +287,14 @@ interface PromotionDetailProps {
 }
 
 function PromotionDetail({ promotion, onClose }: PromotionDetailProps) {
-    const statusConfig = STATUS_CONFIG[promotion.status];
+    const statusConfig = STATUS_CONFIG[promotion.status || 'active'];
     const StatusIcon = statusConfig.icon;
-    const usagePercentage = promotion.max_uses ? (promotion.usage_count / promotion.max_uses) * 100 : null;
+    const usagePercentage = promotion.max_uses ? ((promotion.usage_count || 0) / promotion.max_uses) * 100 : null;
 
     const copyCode = () => {
-        navigator.clipboard.writeText(promotion.code);
+        if (promotion.code) {
+            navigator.clipboard.writeText(promotion.code);
+        }
     };
 
     return (
@@ -349,12 +352,12 @@ function PromotionDetail({ promotion, onClose }: PromotionDetailProps) {
                 </div>
                 <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
                     <span className="text-sm text-gray-500 dark:text-gray-400">Type</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{DISCOUNT_TYPE_LABELS[promotion.discount_type]}</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{promotion.discount_type ? DISCOUNT_TYPE_LABELS[promotion.discount_type] : 'N/A'}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl">
                     <span className="text-sm text-gray-500 dark:text-gray-400">Période</span>
                     <span className="font-medium text-gray-900 dark:text-white">
-                        {new Date(promotion.start_date).toLocaleDateString('fr-FR')} - {new Date(promotion.end_date).toLocaleDateString('fr-FR')}
+                        {new Date(promotion.startDate).toLocaleDateString('fr-FR')} - {new Date(promotion.endDate).toLocaleDateString('fr-FR')}
                     </span>
                 </div>
                 {promotion.max_uses && (
@@ -408,16 +411,16 @@ export default function PromotionsList() {
     const { toasts, addToast, removeToast } = useToast();
 
     const filteredPromotions = promotions.filter(promo => {
-        const matchesSearch = promo.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            promo.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            promo.restaurant.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesSearch = (promo.name?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+            (promo.code?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+            (promo.restaurant?.toLowerCase() || '').includes(searchQuery.toLowerCase());
         const matchesStatus = selectedStatus === 'all' || promo.status === selectedStatus;
         return matchesSearch && matchesStatus;
     });
 
     const activeCount = promotions.filter(p => p.status === 'active').length;
     const scheduledCount = promotions.filter(p => p.status === 'scheduled').length;
-    const totalUsage = promotions.reduce((sum, p) => sum + p.usage_count, 0);
+    const totalUsage = promotions.reduce((sum, p) => sum + (p.usage_count || 0), 0);
 
     const copyCode = (code: string) => {
         navigator.clipboard.writeText(code);
@@ -591,9 +594,9 @@ export default function PromotionsList() {
                 /* Promotions Grid */
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {filteredPromotions.map((promo) => {
-                        const statusConfig = STATUS_CONFIG[promo.status];
+                        const statusConfig = STATUS_CONFIG[promo.status || 'active'];
                         const StatusIcon = statusConfig.icon;
-                        const usagePercentage = promo.max_uses ? (promo.usage_count / promo.max_uses) * 100 : null;
+                        const usagePercentage = promo.max_uses ? ((promo.usage_count || 0) / promo.max_uses) * 100 : null;
 
                         return (
                             <div
@@ -643,7 +646,7 @@ export default function PromotionsList() {
                                             {promo.code}
                                         </div>
                                         <button
-                                            onClick={() => copyCode(promo.code)}
+                                            onClick={() => copyCode(promo.code || '')}
                                             className="p-2 text-gray-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
                                             title="Copier le code"
                                         >
@@ -659,7 +662,7 @@ export default function PromotionsList() {
                                         </p>
                                         <p className="flex items-center gap-2">
                                             <Clock className="w-4 h-4" />
-                                            {new Date(promo.start_date).toLocaleDateString('fr-FR')} - {new Date(promo.end_date).toLocaleDateString('fr-FR')}
+                                            {new Date(promo.startDate).toLocaleDateString('fr-FR')} - {new Date(promo.endDate).toLocaleDateString('fr-FR')}
                                         </p>
                                     </div>
 
@@ -669,7 +672,7 @@ export default function PromotionsList() {
                                             <div className="flex items-center justify-between text-sm mb-1">
                                                 <span className="text-gray-500 dark:text-gray-400">Utilisations</span>
                                                 <span className="font-medium text-gray-900 dark:text-white">
-                                                    {promo.usage_count} / {promo.max_uses}
+                                                    {promo.usage_count || 0} / {promo.max_uses}
                                                 </span>
                                             </div>
                                             <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -719,7 +722,7 @@ export default function PromotionsList() {
                                             </button>
                                         </div>
                                         <span className="text-xs text-gray-400">
-                                            {DISCOUNT_TYPE_LABELS[promo.discount_type]}
+                                            {promo.discount_type ? DISCOUNT_TYPE_LABELS[promo.discount_type] : 'N/A'}
                                         </span>
                                     </div>
                                 </div>

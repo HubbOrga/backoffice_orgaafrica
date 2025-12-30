@@ -4,9 +4,9 @@ import LoginPage from './pages/auth/LoginPage';
 import Dashboard from './pages/dashboard/Dashboard';
 import ProtectedRoute from './components/shared/ProtectedRoute';
 import DashboardLayout from './layouts/DashboardLayout';
-import UsersList from './pages/users/UsersList';
-import IngredientsList from './pages/ingredients/IngredientsList';
-import RestaurantsList from './pages/restaurants/RestaurantsList';
+import TeamManagement from './pages/users/TeamManagement';
+import MenuList from './pages/menu/MenuList';
+import Merchants from './pages/restaurants/Merchants';
 import PromotionsList from './pages/promotions/PromotionsList';
 import RolesList from './pages/roles/RolesList';
 import Settings from './pages/settings/Settings';
@@ -26,10 +26,10 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<DashboardLayout />}>
               <Route path="/" element={<Dashboard />} />
-              <Route path="/users" element={<UsersList />} />
+              <Route path="/users" element={<TeamManagement />} />
               <Route path="/roles" element={<RolesList />} />
-              <Route path="/ingredients" element={<IngredientsList />} />
-              <Route path="/restaurants" element={<RestaurantsList />} />
+              <Route path="/menu" element={<MenuList />} />
+              <Route path="/restaurants" element={<Merchants />} />
               <Route path="/orders" element={<OrdersStatistics />} />
               <Route path="/promotions" element={<PromotionsList />} />
               <Route path="/settings" element={<Settings />} />

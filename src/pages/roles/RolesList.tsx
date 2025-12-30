@@ -19,7 +19,7 @@ export default function RolesList() {
             setEditingRole(role);
             setFormData({
                 name: role.name,
-                description: role.description,
+                description: role.description || '',
                 permissions: role.permissions
             });
         } else {

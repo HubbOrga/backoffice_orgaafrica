@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import {
     LayoutDashboard,
     Utensils,
-    ChefHat,
+    Store,
     Megaphone,
     Settings,
     LogOut,
@@ -23,9 +23,9 @@ export default function DashboardLayout() {
 
     const navigation = [
         { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-        { name: 'Restaurants', href: '/restaurants', icon: Utensils },
+        { name: 'Restaurants', href: '/restaurants', icon: Store },
         { name: 'Commandes', href: '/orders', icon: ShoppingBag },
-        { name: 'Ingrédients', href: '/ingredients', icon: ChefHat },
+        { name: 'Catalogue Menu', href: '/menu', icon: Utensils },
         { name: 'Promotions', href: '/promotions', icon: Megaphone },
         { name: 'Paramètres', href: '/settings', icon: Settings },
     ];
