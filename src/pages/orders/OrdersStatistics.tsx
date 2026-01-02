@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, ComponentType } from 'react';
+import { useState, useMemo, useEffect, type ComponentType } from 'react';
 import {
     ShoppingBag,
     XCircle,
@@ -13,7 +13,8 @@ import {
     ChevronDown,
     ChevronUp,
     RefreshCw,
-    Timer
+    Timer,
+    Download
 } from 'lucide-react';
 import { MOCK_ORDERS, MOCK_RESERVATIONS } from '../../data/ordersData';
 import { INITIAL_RESTAURANTS } from '../../data/mockData';
@@ -25,7 +26,10 @@ import { cn } from '../../lib/utils';
 // HELPERS & COMPONENTS
 // ============================================
 
+import { useAuth } from '../../contexts/AuthContext';
+
 const StatusBadge = ({ status }: { status: OrderStatus | ReservationStatus }) => {
+    // ... (StatusBadge implementation)
     const configs: Record<string, { label: string; color: string; icon: ComponentType<{ className?: string }> }> = {
         [OrderStatus.PENDING]: { label: 'En attente', color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400', icon: Clock },
         [OrderStatus.PREPARING]: { label: 'En préparation', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400', icon: Timer },
@@ -46,11 +50,27 @@ const StatusBadge = ({ status }: { status: OrderStatus | ReservationStatus }) =>
 };
 
 export default function OrdersStatistics() {
+    const { user } = useAuth();
     const [timeRange, setTimeRange] = useState('30d');
     const [expandedRestaurant, setExpandedRestaurant] = useState<string | null>(null);
     const [lastRefresh, setLastRefresh] = useState(new Date());
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [showOrdersList, setShowOrdersList] = useState(false);
+
+    // Filtered Data based on Role
+    const filteredOrders = useMemo(() => {
+        if (user?.merchantId) {
+            return MOCK_ORDERS.filter(o => o.merchantId === user.merchantId);
+        }
+        return MOCK_ORDERS;
+    }, [user]);
+
+    const filteredReservations = useMemo(() => {
+        if (user?.merchantId) {
+            return MOCK_RESERVATIONS.filter(r => r.merchantId === user.merchantId);
+        }
+        return MOCK_RESERVATIONS;
+    }, [user]);
 
     // Auto-refresh every 30 seconds
     useEffect(() => {
@@ -71,16 +91,16 @@ export default function OrdersStatistics() {
         }, 500);
     };
 
-    // Global Statistics Calculation
+    // Global Statistics Calculation (Scoped to User View)
     const globalStats: OrderStatistics = useMemo(() => {
-        const totalOrders = MOCK_ORDERS.length;
-        const cancelledOrders = MOCK_ORDERS.filter(o => o.status === OrderStatus.CANCELLED).length;
-        const completedOrders = MOCK_ORDERS.filter(o => o.status === OrderStatus.COMPLETED).length;
-        const pendingOrders = MOCK_ORDERS.filter(o => ([OrderStatus.PENDING, OrderStatus.PREPARING] as OrderStatus[]).includes(o.status)).length;
-        const totalRevenue = MOCK_ORDERS
+        const totalOrders = filteredOrders.length;
+        const cancelledOrders = filteredOrders.filter(o => o.status === OrderStatus.CANCELLED).length;
+        const completedOrders = filteredOrders.filter(o => o.status === OrderStatus.COMPLETED).length;
+        const pendingOrders = filteredOrders.filter(o => ([OrderStatus.PENDING, OrderStatus.PREPARING] as OrderStatus[]).includes(o.status)).length;
+        const totalRevenue = filteredOrders
             .filter(o => o.status !== OrderStatus.CANCELLED)
             .reduce((sum, order) => sum + (order.totalPrice || 0), 0);
-        const averageOrderValue = totalRevenue / (totalOrders - cancelledOrders);
+        const averageOrderValue = totalOrders > cancelledOrders ? totalRevenue / (totalOrders - cancelledOrders) : 0;
 
         return {
             totalOrders,
@@ -90,16 +110,20 @@ export default function OrdersStatistics() {
             totalRevenue,
             averageOrderValue: isNaN(averageOrderValue) ? 0 : averageOrderValue,
         };
-    }, []); // Removed lastRefresh as it's not used in calculation
+    }, [filteredOrders]);
 
     // Merchant Statistics Calculation
     const merchantStats: MerchantOrderStatistics[] = useMemo(() => {
-        const merchantIds = [...new Set(MOCK_ORDERS.map(o => o.merchantId))];
+        // If user is a merchant, only show their own stats
+        const relevantOrders = filteredOrders;
+        const relevantReservations = filteredReservations;
+
+        const merchantIds = [...new Set(relevantOrders.map(o => o.merchantId))];
 
         return merchantIds.map(merchantId => {
             const restaurant = INITIAL_RESTAURANTS.find(r => r.id === merchantId);
-            const restaurantOrders = MOCK_ORDERS.filter(o => o.merchantId === merchantId);
-            const restaurantReservations = MOCK_RESERVATIONS.filter(r => r.merchantId === merchantId);
+            const restaurantOrders = relevantOrders.filter(o => o.merchantId === merchantId);
+            const restaurantReservations = relevantReservations.filter(r => r.merchantId === merchantId);
 
             const totalOrders = restaurantOrders.length;
             const cancelledOrders = restaurantOrders.filter(o => o.status === OrderStatus.CANCELLED).length;
@@ -108,7 +132,7 @@ export default function OrdersStatistics() {
             const totalRevenue = restaurantOrders
                 .filter(o => o.status !== OrderStatus.CANCELLED)
                 .reduce((sum, order) => sum + (order.totalPrice || 0), 0);
-            const averageOrderValue = totalRevenue / (totalOrders - cancelledOrders);
+            const averageOrderValue = totalOrders > cancelledOrders ? totalRevenue / (totalOrders - cancelledOrders) : 0;
 
             const totalReservations = restaurantReservations.length;
             const cancelledReservations = restaurantReservations.filter(r => r.status === ReservationStatus.CANCELLED).length;
@@ -126,7 +150,7 @@ export default function OrdersStatistics() {
                 cancelledReservations,
             };
         }).sort((a, b) => b.totalRevenue - a.totalRevenue);
-    }, []); // Removed lastRefresh as it's not used in calculation
+    }, [filteredOrders, filteredReservations]);
 
     const toggleRestaurant = (restaurantId: string) => {
         setExpandedRestaurant(expandedRestaurant === restaurantId ? null : restaurantId);
@@ -137,6 +161,33 @@ export default function OrdersStatistics() {
         if (seconds < 60) return `Il y a ${seconds}s`;
         const minutes = Math.floor(seconds / 60);
         return `Il y a ${minutes}min`;
+    };
+
+    const handleExport = () => {
+        const headers = ['N° Commande', 'Restaurant', 'Client', 'Date', 'Total', 'Statut'];
+        const csvContent = [
+            headers.join(','),
+            ...filteredOrders.map(order => [
+                `"${order.orderNumber || order.id.slice(0, 8)}"`,
+                `"${order.restaurant_name}"`,
+                `"${order.user_name || 'Client Anonyme'}"`,
+                `"${new Date(order.createdAt).toLocaleString()}"`,
+                `"${order.totalPrice || 0}"`,
+                `"${order.status}"`
+            ].join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'commandes_export.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     };
 
     return (
@@ -174,6 +225,14 @@ export default function OrdersStatistics() {
                                 <option value="12m" className="text-gray-900">12 derniers mois</option>
                             </select>
                         </div>
+
+                        <button
+                            onClick={handleExport}
+                            className="group flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-xl border border-white/20 text-white rounded-2xl hover:bg-white/20 transition-all duration-300 shadow-xl hover:scale-105 active:scale-95"
+                        >
+                            <Download className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
+                            <span className="font-bold text-sm">Exporter</span>
+                        </button>
 
                         <button
                             onClick={handleRefresh}

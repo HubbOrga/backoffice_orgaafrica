@@ -14,7 +14,8 @@ import {
     Eye,
     Copy,
     Tag,
-    Play
+    Play,
+    Download
 } from 'lucide-react';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
@@ -487,6 +488,37 @@ export default function PromotionsList() {
         setIsDeleteDialogOpen(true);
     };
 
+    const handleExport = () => {
+        const headers = ['Nom', 'Description', 'Code', 'Type', 'Valeur', 'Restaurant', 'Statut', 'Début', 'Fin', 'Utilisations'];
+        const csvContent = [
+            headers.join(','),
+            ...filteredPromotions.map(promo => [
+                `"${promo.name}"`,
+                `"${promo.description || ''}"`,
+                `"${promo.code || ''}"`,
+                `"${promo.discount_type}"`,
+                `"${promo.discount_value}"`,
+                `"${promo.restaurant}"`,
+                `"${promo.status}"`,
+                `"${new Date(promo.startDate).toLocaleDateString()}"`,
+                `"${new Date(promo.endDate).toLocaleDateString()}"`,
+                `"${promo.usage_count || 0}/${promo.max_uses || 'Illimité'}"`
+            ].join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'promotions_export.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    };
+
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -500,13 +532,22 @@ export default function PromotionsList() {
                         Créez et gérez vos campagnes promotionnelles
                     </p>
                 </div>
-                <button
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground hover:opacity-90 font-medium rounded-xl transition-all duration-300 shadow-lg"
-                >
-                    <Plus className="w-5 h-5" />
-                    Créer une promotion
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={handleExport}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 font-medium rounded-xl transition-all duration-300"
+                    >
+                        <Download className="w-5 h-5" />
+                        Exporter
+                    </button>
+                    <button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground hover:opacity-90 font-medium rounded-xl transition-all duration-300 shadow-lg"
+                    >
+                        <Plus className="w-5 h-5" />
+                        Créer une promotion
+                    </button>
+                </div>
             </div>
 
             {/* Stats Cards */}

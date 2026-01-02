@@ -17,7 +17,8 @@ import {
     Table as TableIcon,
     X,
     Save,
-    Store
+    Store,
+    Download
 } from 'lucide-react';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
@@ -573,6 +574,36 @@ export default function Merchants() {
         setIsDeleteDialogOpen(true);
     };
 
+    const handleExport = () => {
+        const headers = ['Nom', 'Cuisine', 'Adresse', 'Téléphone', 'Email', 'Note', 'Avis', 'Statut', 'Vérifié'];
+        const csvContent = [
+            headers.join(','),
+            ...filteredMerchants.map(m => [
+                `"${m.name}"`,
+                `"${m.cuisine || ''}"`,
+                `"${m.address}"`,
+                `"${m.phone}"`,
+                `"${m.contactEmail}"`,
+                `"${m.rating}"`,
+                `"${m.reviews}"`,
+                `"${m.is_open ? 'Ouvert' : 'Fermé'}"`,
+                `"${m.is_verified ? 'Oui' : 'Non'}"`
+            ].join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'etablissements_export.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    };
+
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -586,13 +617,22 @@ export default function Merchants() {
                         {merchants.length} marchands enregistrés
                     </p>
                 </div>
-                <button
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground hover:opacity-90 font-medium rounded-xl transition-all duration-300 shadow-lg"
-                >
-                    <Plus className="w-5 h-5" />
-                    Ajouter un établissement
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={handleExport}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 font-medium rounded-xl transition-all duration-300"
+                    >
+                        <Download className="w-5 h-5" />
+                        Exporter
+                    </button>
+                    <button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-primary-foreground hover:opacity-90 font-medium rounded-xl transition-all duration-300 shadow-lg"
+                    >
+                        <Plus className="w-5 h-5" />
+                        Ajouter un établissement
+                    </button>
+                </div>
             </div>
 
             {/* Filters */}

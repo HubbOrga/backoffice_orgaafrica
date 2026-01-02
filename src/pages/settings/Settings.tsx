@@ -1,4 +1,4 @@
-import { useState, ComponentType } from 'react';
+import { useState, useEffect, type ComponentType } from 'react';
 import {
     User,
     Settings as SettingsIcon,
@@ -15,6 +15,7 @@ import {
     Users
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { useToast, ToastContainer } from '../../components/ui/Toast';
 import TeamManagement from "../users/TeamManagement.tsx";
 import RolesList from '../roles/RolesList';
@@ -265,35 +266,42 @@ interface DisplaySettingsProps {
 }
 
 function DisplaySettings({ data, onChange }: DisplaySettingsProps) {
+    const { theme, setTheme } = useTheme();
+
+    const handleThemeChange = (newTheme: string) => {
+        setTheme(newTheme as 'light' | 'dark' | 'system');
+        onChange('theme', newTheme);
+    };
+
     return (
         <div className="space-y-6">
             <div className="space-y-4">
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white">Thème de l'interface</h3>
                 <div className="grid grid-cols-3 gap-4">
                     <button
-                        onClick={() => onChange('theme', 'light')}
-                        className={`p-4 rounded-xl border-2 flex flex-col items-center gap-3 transition-all ${data.theme === 'light' ? 'border-primary bg-primary/5' : 'border-transparent hover:border-gray-200 dark:hover:border-gray-700 bg-gray-50 dark:bg-gray-900'}`}
+                        onClick={() => handleThemeChange('light')}
+                        className={`p-4 rounded-xl border-2 flex flex-col items-center gap-3 transition-all ${theme === 'light' ? 'border-primary bg-primary/5' : 'border-transparent hover:border-gray-200 dark:hover:border-gray-700 bg-gray-50 dark:bg-gray-900'}`}
                     >
                         <div className="w-full aspect-video bg-white rounded-lg shadow-sm border border-gray-200"></div>
-                        <span className={`font-bold flex items-center gap-2 ${data.theme === 'light' ? 'text-primary' : 'text-gray-500'}`}>
+                        <span className={`font-bold flex items-center gap-2 ${theme === 'light' ? 'text-primary' : 'text-gray-500'}`}>
                             <Sun className="w-4 h-4" /> Clair
                         </span>
                     </button>
                     <button
-                        onClick={() => onChange('theme', 'dark')}
-                        className={`p-4 rounded-xl border-2 flex flex-col items-center gap-3 transition-all ${data.theme === 'dark' ? 'border-primary bg-primary/5' : 'border-transparent hover:border-gray-200 dark:hover:border-gray-700 bg-gray-50 dark:bg-gray-900'}`}
+                        onClick={() => handleThemeChange('dark')}
+                        className={`p-4 rounded-xl border-2 flex flex-col items-center gap-3 transition-all ${theme === 'dark' ? 'border-primary bg-primary/5' : 'border-transparent hover:border-gray-200 dark:hover:border-gray-700 bg-gray-50 dark:bg-gray-900'}`}
                     >
                         <div className="w-full aspect-video bg-gray-900 rounded-lg shadow-sm border border-gray-700"></div>
-                        <span className={`font-bold flex items-center gap-2 ${data.theme === 'dark' ? 'text-primary' : 'text-gray-500'}`}>
+                        <span className={`font-bold flex items-center gap-2 ${theme === 'dark' ? 'text-primary' : 'text-gray-500'}`}>
                             <Moon className="w-4 h-4" /> Sombre
                         </span>
                     </button>
                     <button
-                        onClick={() => onChange('theme', 'system')}
-                        className={`p-4 rounded-xl border-2 flex flex-col items-center gap-3 transition-all ${data.theme === 'system' ? 'border-primary bg-primary/5' : 'border-transparent hover:border-gray-200 dark:hover:border-gray-700 bg-gray-50 dark:bg-gray-900'}`}
+                        onClick={() => handleThemeChange('system')}
+                        className={`p-4 rounded-xl border-2 flex flex-col items-center gap-3 transition-all ${theme === 'system' ? 'border-primary bg-primary/5' : 'border-transparent hover:border-gray-200 dark:hover:border-gray-700 bg-gray-50 dark:bg-gray-900'}`}
                     >
                         <div className="w-full aspect-video bg-gradient-to-br from-white to-gray-900 rounded-lg shadow-sm border border-gray-200"></div>
-                        <span className={`font-bold flex items-center gap-2 ${data.theme === 'system' ? 'text-primary' : 'text-gray-500'}`}>
+                        <span className={`font-bold flex items-center gap-2 ${theme === 'system' ? 'text-primary' : 'text-gray-500'}`}>
                             <Monitor className="w-4 h-4" /> Système
                         </span>
                     </button>
@@ -338,6 +346,7 @@ function DisplaySettings({ data, onChange }: DisplaySettingsProps) {
 
 export default function Settings() {
     const { user } = useAuth();
+    const { theme } = useTheme();
     const [activeTab, setActiveTab] = useState<TabId>('profile');
     const { toasts, addToast, removeToast } = useToast();
 
@@ -360,10 +369,25 @@ export default function Settings() {
     const [notificationData, setNotificationData] = useState<boolean[]>([true, true, true, false, false]);
 
     const [displayData, setDisplayData] = useState({
-        theme: 'system',
+        theme: theme,
         language: 'fr',
         timezone: 'europe/paris'
     });
+
+    // Load saved settings
+    useEffect(() => {
+        const savedProfile = localStorage.getItem('settings_profile');
+        if (savedProfile) setProfileData(JSON.parse(savedProfile));
+
+        const savedSecurity = localStorage.getItem('settings_security');
+        if (savedSecurity) setSecurityData(JSON.parse(savedSecurity));
+
+        const savedNotifs = localStorage.getItem('settings_notifications');
+        if (savedNotifs) setNotificationData(JSON.parse(savedNotifs));
+
+        const savedDisplay = localStorage.getItem('settings_display');
+        if (savedDisplay) setDisplayData(JSON.parse(savedDisplay));
+    }, []);
 
     const handleSave = () => {
         // Validation logic could go here
@@ -371,6 +395,12 @@ export default function Settings() {
             addToast('error', 'Les mots de passe ne correspondent pas');
             return;
         }
+
+        // Save to localStorage
+        if (activeTab === 'profile') localStorage.setItem('settings_profile', JSON.stringify(profileData));
+        if (activeTab === 'security') localStorage.setItem('settings_security', JSON.stringify(securityData));
+        if (activeTab === 'notifications') localStorage.setItem('settings_notifications', JSON.stringify(notificationData));
+        if (activeTab === 'display') localStorage.setItem('settings_display', JSON.stringify(displayData));
 
         // Mock API call
         setTimeout(() => {

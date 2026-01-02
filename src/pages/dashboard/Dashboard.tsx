@@ -139,6 +139,33 @@ export default function Dashboard() {
         setSortConfig({ key, direction });
     };
 
+    const handleExport = () => {
+        const headers = ['Client', 'Email', 'Segment', 'Commandes', 'CA Total', 'Dernier Restaurant'];
+        const csvContent = [
+            headers.join(','),
+            ...sortedUsers.map(u => [
+                `"${u.name}"`,
+                `"${u.email}"`,
+                `"${u.type}"`,
+                `"${u.orders}"`,
+                `"${u.revenue}"`,
+                `"${u.lastRestaurant}"`
+            ].join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'rapport_dashboard.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    };
+
     return (
         <div className="space-y-8 pb-12 animate-in fade-in duration-700">
             {/* --- HERO SECTION --- */}
@@ -189,7 +216,10 @@ export default function Dashboard() {
                             </select>
                         </div>
 
-                        <button className="group flex items-center gap-2 px-6 py-3 bg-white text-primary rounded-2xl hover:bg-white/90 transition-all duration-300 shadow-xl hover:scale-105 active:scale-95">
+                        <button
+                            onClick={handleExport}
+                            className="group flex items-center gap-2 px-6 py-3 bg-white text-primary rounded-2xl hover:bg-white/90 transition-all duration-300 shadow-xl hover:scale-105 active:scale-95"
+                        >
                             <Download className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
                             <span className="font-bold text-sm">Rapport Complet</span>
                         </button>

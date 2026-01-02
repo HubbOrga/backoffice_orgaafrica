@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Shield, Edit, Trash2, Check } from 'lucide-react';
+import { Plus, Shield, Edit, Trash2, Check, Download, Search } from 'lucide-react';
 
 import type { Permission, Role } from '../../types';
 import { AVAILABLE_PERMISSIONS, MOCK_ROLES } from '../../data/mockData';
@@ -13,6 +13,7 @@ export default function RolesList() {
         description: '',
         permissions: [] as string[]
     });
+    const [searchQuery, setSearchQuery] = useState('');
 
     const handleOpenModal = (role?: Role) => {
         if (role) {
@@ -75,6 +76,36 @@ export default function RolesList() {
         return acc;
     }, {} as Record<string, Permission[]>);
 
+    const handleExport = () => {
+        const headers = ['Nom', 'Description', 'Nombre de permissions', 'Nombre d\'utilisateurs'];
+        const csvContent = [
+            headers.join(','),
+            ...roles.map(role => [
+                `"${role.name}"`,
+                `"${role.description || ''}"`,
+                `"${role.permissions.length}"`,
+                `"${role.usersCount}"`
+            ].join(','))
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'roles_export.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    };
+
+    const filteredRoles = roles.filter(role =>
+        role.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (role.description && role.description.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
@@ -82,17 +113,40 @@ export default function RolesList() {
                     <h1 className="text-2xl font-bold text-primary">Roles & Permissions</h1>
                     <p className="text-gray-500 mt-1">Manage system roles and access rights</p>
                 </div>
-                <button
-                    onClick={() => handleOpenModal()}
-                    className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity"
-                >
-                    <Plus className="w-5 h-5 mr-2" />
-                    Create Role
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={handleExport}
+                        className="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                    >
+                        <Download className="w-5 h-5 mr-2" />
+                        Export
+                    </button>
+                    <button
+                        onClick={() => handleOpenModal()}
+                        className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity"
+                    >
+                        <Plus className="w-5 h-5 mr-2" />
+                        Create Role
+                    </button>
+                </div>
+            </div>
+
+            {/* Search */}
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 p-4">
+                <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input
+                        type="text"
+                        placeholder="Search roles..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-md text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+                    />
+                </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {roles.map((role) => (
+                {filteredRoles.map((role) => (
                     <div key={role.id} className="bg-card text-card-foreground rounded-lg border border-border shadow-sm p-6 hover:shadow-md transition-shadow">
                         <div className="flex justify-between items-start mb-4">
                             <div className="p-2 bg-secondary rounded-lg">

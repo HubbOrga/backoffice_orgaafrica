@@ -39,6 +39,7 @@ export interface User {
     avatar?: string | null;
     username?: string; // API User has firstName/lastName, mock had username
     fullname?: string; // UI helper
+    merchantId?: UUID; // For restaurant owners/staff
 }
 
 export interface OTPRequest {
@@ -217,8 +218,14 @@ export interface Invoice {
     orderId: UUID;
     invoiceNumber: string;
     amount: number;
+    status: 'PAID' | 'PENDING' | 'OVERDUE';
     pdfUrl?: string;
     issuedAt: string;
+    dueDate: string;
+    merchantId: UUID;
+    merchantName: string;
+    customerId: UUID;
+    customerName: string;
 }
 
 // --- MODULE : PRÉFÉRENCES ---
@@ -258,4 +265,42 @@ export interface Ingredient {
     price_per_unit: number;
     supplier: string;
     last_restock: string;
+}
+
+// --- MODULE : ANALYTICS ---
+
+export interface DishPerformance {
+    menuItemId: UUID;
+    name: string;
+    category: string;
+    price: number;
+    totalSold: number;
+    totalRevenue: number;
+    favoritesCount: number;
+    viewsCount: number;
+    trend: 'UP' | 'DOWN' | 'STABLE';
+    recommendation?: string;
+    merchantId: UUID;
+}
+
+export interface AnalyticsSummary {
+    totalRevenue: number;
+    totalOrders: number;
+    topDishes: DishPerformance[];
+    dailyStats: { date: string; revenue: number; orders: number }[];
+}
+
+// --- MODULE : CLIENTS ---
+
+export interface Client {
+    id: UUID;
+    name: string;
+    email?: string;
+    phone?: string;
+    totalOrders: number;
+    totalSpent: number;
+    lastOrderDate: string;
+    merchantId: UUID; // The restaurant they belong to in this context
+    merchantName: string;
+    status: 'ACTIVE' | 'INACTIVE'; // Active if ordered recently
 }

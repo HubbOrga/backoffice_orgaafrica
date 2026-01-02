@@ -11,7 +11,8 @@ import {
     ChevronRight,
     Tag,
     Layers,
-    PlusCircle
+    PlusCircle,
+    Download
 } from 'lucide-react';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
@@ -317,6 +318,38 @@ export default function MenuList() {
         setSelectedItem(null);
     };
 
+    const handleExport = () => {
+        const headers = ['Nom', 'Description', 'Prix', 'Catégorie', 'Sous-catégorie', 'Disponible', 'Temps de préparation'];
+        const csvContent = [
+            headers.join(','),
+            ...filteredItems.map(item => {
+                const category = MOCK_CATEGORIES.find(c => c.id === item.categoryId);
+                const subcategory = category?.subcategories?.find((s: Subcategory) => s.id === item.subcategoryId);
+                return [
+                    `"${item.name}"`,
+                    `"${item.description || ''}"`,
+                    `"${item.price}"`,
+                    `"${category?.name || ''}"`,
+                    `"${subcategory?.name || ''}"`,
+                    `"${item.isAvailable ? 'Oui' : 'Non'}"`,
+                    `"${item.preparationTime}"`
+                ].join(',');
+            })
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'menu_export.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    };
+
     return (
         <div className="space-y-8 pb-12 animate-in fade-in duration-700">
             {/* Header */}
@@ -332,13 +365,22 @@ export default function MenuList() {
                         Gérez vos plats, catégories et suppléments
                     </p>
                 </div>
-                <button
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="inline-flex items-center gap-3 px-6 py-4 bg-primary text-white hover:opacity-90 font-bold rounded-2xl transition-all shadow-xl shadow-primary/20 hover:scale-105 active:scale-95"
-                >
-                    <Plus className="w-6 h-6" />
-                    Ajouter un plat
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={handleExport}
+                        className="inline-flex items-center gap-3 px-6 py-4 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 font-bold rounded-2xl transition-all shadow-xl shadow-gray-200/20 dark:shadow-none hover:scale-105 active:scale-95"
+                    >
+                        <Download className="w-6 h-6" />
+                        Exporter
+                    </button>
+                    <button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="inline-flex items-center gap-3 px-6 py-4 bg-primary text-white hover:opacity-90 font-bold rounded-2xl transition-all shadow-xl shadow-primary/20 hover:scale-105 active:scale-95"
+                    >
+                        <Plus className="w-6 h-6" />
+                        Ajouter un plat
+                    </button>
+                </div>
             </div>
 
             {/* Filters Bar */}

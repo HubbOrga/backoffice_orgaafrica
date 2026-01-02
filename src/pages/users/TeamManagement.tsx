@@ -10,7 +10,8 @@ import {
     Trash2,
     Eye,
     Mail,
-    Phone
+    Phone,
+    Download
 } from 'lucide-react';
 import Modal from '../../components/ui/Modal';
 import ConfirmDialog from '../../components/ui/ConfirmDialog';
@@ -333,6 +334,8 @@ export default function TeamManagement() {
     const handleCreate = (data: UserFormData) => {
         const newUser: User = {
             ...data,
+            firstName: data.firstName || '',
+            lastName: data.lastName || '',
             id: Date.now().toString(),
             createdAt: new Date().toISOString().split('T')[0],
         };
@@ -355,7 +358,12 @@ export default function TeamManagement() {
     const handleEdit = (data: UserFormData) => {
         if (!selectedUser) return;
         const updatedUsers = users.map(u =>
-            u.id === selectedUser.id ? { ...u, ...data } : u
+            u.id === selectedUser.id ? {
+                ...u,
+                ...data,
+                firstName: data.firstName || u.firstName,
+                lastName: data.lastName || u.lastName
+            } : u
         );
         setUsers(updatedUsers);
 
@@ -408,6 +416,37 @@ export default function TeamManagement() {
         setIsDeleteDialogOpen(true);
     };
 
+    const handleExport = () => {
+        const headers = ['Nom', 'Email', 'Téléphone', 'Rôle', 'Statut', 'Établissement', 'Rôle Marchand'];
+        const csvContent = [
+            headers.join(','),
+            ...filteredUsers.map(user => {
+                const staffInfo = getUserStaffInfo(user.id);
+                return [
+                    `"${user.fullname}"`,
+                    `"${user.email}"`,
+                    `"${user.phone || ''}"`,
+                    `"${getRoleDetails(user.role).label}"`,
+                    `"${user.isActive ? 'Actif' : 'Inactif'}"`,
+                    `"${staffInfo?.merchantName || 'Non affecté'}"`,
+                    `"${staffInfo?.roleName || ''}"`
+                ].join(',');
+            })
+        ].join('\n');
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        if (link.download !== undefined) {
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'equipe_export.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    };
+
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -421,13 +460,22 @@ export default function TeamManagement() {
                         Gérez les membres de votre équipe et leurs accès aux établissements
                     </p>
                 </div>
-                <button
-                    onClick={() => setIsCreateModalOpen(true)}
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-white hover:opacity-90 font-bold rounded-xl transition-all duration-300 shadow-lg shadow-primary/20"
-                >
-                    <Plus className="w-5 h-5" />
-                    Ajouter un membre
-                </button>
+                <div className="flex gap-3">
+                    <button
+                        onClick={handleExport}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 font-bold rounded-xl transition-all duration-300"
+                    >
+                        <Download className="w-5 h-5" />
+                        Exporter
+                    </button>
+                    <button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-primary text-white hover:opacity-90 font-bold rounded-xl transition-all duration-300 shadow-lg shadow-primary/20"
+                    >
+                        <Plus className="w-5 h-5" />
+                        Ajouter un membre
+                    </button>
+                </div>
             </div>
 
             {/* Filters */}

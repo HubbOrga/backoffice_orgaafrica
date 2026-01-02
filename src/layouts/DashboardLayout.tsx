@@ -12,7 +12,10 @@ import {
     X,
     Bell,
     Search,
-    ShoppingBag
+    ShoppingBag,
+    FileText,
+    TrendingUp,
+    Users
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -25,6 +28,9 @@ export default function DashboardLayout() {
         { name: 'Dashboard', href: '/', icon: LayoutDashboard },
         { name: 'Restaurants', href: '/restaurants', icon: Store },
         { name: 'Commandes', href: '/orders', icon: ShoppingBag },
+        { name: 'Analytics', href: '/analytics', icon: TrendingUp },
+        { name: 'Clients', href: '/clients', icon: Users },
+        { name: 'Factures', href: '/invoices', icon: FileText },
         { name: 'Catalogue Menu', href: '/menu', icon: Utensils },
         { name: 'Promotions', href: '/promotions', icon: Megaphone },
         { name: 'Paramètres', href: '/settings', icon: Settings },
